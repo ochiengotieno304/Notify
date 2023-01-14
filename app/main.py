@@ -19,13 +19,16 @@ phone = os.getenv('phone', 'phone')
 africastalking.initialize(username, api_key)
 sms = africastalking.SMS
 
-# def send_async_email(app, msg):
-#     with app.app_context():
-#         mail.send(msg)
+def send_async_email(app, msg):
+    with app.app_context():
+        mail.send(msg)
 
-# def send_email(to, subject, template, **kwargs):
-#     msg = Message(subject, recipients=[to], html=template)
-#     Thread(target=send_async_email, args=(current_app._get_current_object(), msg)).start()
+def send_email(to, subject, template, **kwargs):
+    msg = Message(subject, sender=os.getenv("email"), recipients=[to])
+    msg.body = template
+    thr = Thread(target=send_async_email, args=[current_app._get_current_object(), msg])
+    thr.start()
+    return thr
 
 
 @main.route('/')
@@ -52,16 +55,6 @@ def add_alert():
     db.session.add(new_alert)
     db.session.commit()
 
-    # message = f"Dear {new_alert.name} your alert, ID: 00{new_alert.id} has been logged into our storage"
-
-    # msg = Message("alert Added",
-    #             sender=os.getenv("email"),
-    #             recipients=[new_alert.email],
-    #             body=message)
-
-    # mail.send(msg)
-
-    # sms.send(f"Dear {new_alert.name} your alert ID: 00{new_alert.id} has been logged into our storage", [f"{phone}"], callback=on_finish)
     return redirect(url_for('main.index'))
 
 
@@ -92,16 +85,7 @@ def add_student():
 
     message = f"Dear {new_student.name} you have been subscribed to university email alerts"
 
-    msg = Message("University News Subscription",
-                sender=os.getenv("email"),
-                recipients=[new_student.email],
-                body=message)
-
-    mail.send(msg)
-
-
-    # send_email(new_student.email, "University News Subscription", message)
-
+    send_email(new_student.email, "University News Subscription", message)
     return redirect(url_for('main.student'))
 
 
