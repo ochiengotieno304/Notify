@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="columns">
+  <div class="column is-3 ">
+    <aside class="menu is-hidden-mobile">
+      <p class="menu-label">
+        General
+      </p>
+      <ul class="menu-list">
+        <li><a class="has-background-primary has-text-white">News</a></li>
+        <li><a href="{{ url_for('main.student') }}">Students</a></li>
+        <li><a href="{{ url_for('main.alert') }}">Add alert</a></li>
+      </ul>
+
+    </aside>
+  </div>
+  <div class="column is-9">
+    <section class="hero is-primary welcome is-small">
+      <div class="hero-body">
+        <div class="container">
+          <h1 class="title">
+            News
+          </h1>
+
+        </div>
+      </div>
+    </section>
+
+
+    <div class="is-6">
+      <div class="card events-card">
+        <header class="card-header">
+
+          <a href="#" class="card-header-icon" aria-label="more options">
+            <span class="icon">
+              <i class="fa fa-angle-down" aria-hidden="true"></i>
+            </span>
+          </a>
+        </header>
+        <div class="card-table">
+          <div class="content">
+            <table class="table is-fullwidth is-striped">
+              <tbody>
+                <tr>
+                  <td>
+                  <td>Code</td>
+                  <td>Title</td>
+                </tr>
+                {% for alert in alerts %}
+                <tr>
+                  <td width="5%">
+                  <td>00{{ alert.id }}</td>
+                  <td>{{ alert.title }}</td>
+                  <td><a class="button is-link is-small" href="/alert/{{alert.id}}">View</a></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+{% endblock %}

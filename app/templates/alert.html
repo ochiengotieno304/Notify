@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="columns">
+  <div class="column is-3 ">
+    <aside class="menu is-hidden-mobile">
+      <p class="menu-label">
+        General
+      </p>
+      <ul class="menu-list">
+        <li><a href="{{ url_for('main.index') }}">News</a></li>
+        <li><a href="{{ url_for('main.student') }}">Students</a></li>
+        <li><a href="{{ url_for('main.alert') }}" class="has-background-primary has-text-white"> New Post</a></li>
+      </ul>
+
+    </aside>
+  </div>
+  <div class="column is-9">
+    <section class="hero is-primary welcome is-small">
+      <div class="hero-body">
+        <div class="container">
+          <h1 class="title">
+            Post News
+          </h1>
+
+        </div>
+      </div>
+    </section>
+    <form method="POST" action="/alert">
+      <div class="field">
+        <label class="label">News Title</label>
+        <div class="control">
+          <input class="input" type="text" name="title" placeholder="title">
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label">Laguage Description</label>
+        <div class="control">
+          <textarea class="textarea" name="body" placeholder="post body" spellcheck="true"></textarea>
+        </div>
+      </div>
+
+      <div class="field is-grouped">
+        <div class="control">
+          <button class="button is-primary">Post</button>
+        </div>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}
