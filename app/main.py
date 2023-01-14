@@ -1,6 +1,7 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash, current_app
 from flask_login import login_required, current_user
 from flask_mail import Message
+from threading import Thread
 from app import mail
 from .models import Alert, Student
 from . import db
@@ -17,6 +18,14 @@ phone = os.getenv('phone', 'phone')
 
 africastalking.initialize(username, api_key)
 sms = africastalking.SMS
+
+# def send_async_email(app, msg):
+#     with app.app_context():
+#         mail.send(msg)
+
+# def send_email(to, subject, template, **kwargs):
+#     msg = Message(subject, recipients=[to], html=template)
+#     Thread(target=send_async_email, args=(current_app._get_current_object(), msg)).start()
 
 
 @main.route('/')
@@ -81,6 +90,18 @@ def add_student():
     db.session.add(new_student)
     db.session.commit()
 
+    message = f"Dear {new_student.name} you have been subscribed to university email alerts"
+
+    msg = Message("University News Subscription",
+                sender=os.getenv("email"),
+                recipients=[new_student.email],
+                body=message)
+
+    mail.send(msg)
+
+
+    # send_email(new_student.email, "University News Subscription", message)
+
     return redirect(url_for('main.student'))
 
 
@@ -102,4 +123,6 @@ def logout(id):
     flash("alert logged out")
 
     return redirect(url_for('main.index'))
+
+
 
