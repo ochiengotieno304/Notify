@@ -43,11 +43,10 @@
                 </tr>
                 {% for student in students %}
                 <tr>
-                  <!-- <td width="5%"> -->
                   <td>{{ student.reg}}</td>
                   <td>{{ student.name }}</td>
                   <td>{{ student.email }}</td>
-                  <!-- <td><a class="button is-link is-small" href="/alert/{{student.id}}">View</a></td> -->
+                  <td><a href="{{ url_for("main.delete_student", id=student.id) }}">Delete</a></td>
                 </tr>
                 {% endfor %}
               </tbody>

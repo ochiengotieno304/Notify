@@ -19,14 +19,17 @@ phone = os.getenv('phone', 'phone')
 africastalking.initialize(username, api_key)
 sms = africastalking.SMS
 
+
 def send_async_email(app, msg):
     with app.app_context():
         mail.send(msg)
 
+
 def send_email(to, subject, template, **kwargs):
     msg = Message(subject, sender=os.getenv("email"), recipients=[to])
     msg.body = template
-    thr = Thread(target=send_async_email, args=[current_app._get_current_object(), msg])
+    thr = Thread(target=send_async_email, args=[
+                 current_app._get_current_object(), msg])
     thr.start()
     return thr
 
@@ -51,6 +54,12 @@ def add_alert():
     body = request.form.get('body')
 
     new_alert = Alert(title=title, body=body)
+    students = Student.query.all()
+
+    for student in students:
+        message = new_alert.body
+        send_email(student.email,
+                   f"University News (New Post) - {new_alert.title}", message)
 
     db.session.add(new_alert)
     db.session.commit()
@@ -63,11 +72,13 @@ def on_finish(error, response):
         raise error
     print(response)
 
+
 @main.route('/student')
 @login_required
 def student():
     students = Student.query.all()
     return render_template('student.html', students=students)
+
 
 @main.route('/student', methods=['POST'])
 @login_required
@@ -78,12 +89,13 @@ def add_student():
     phone = request.form.get('phone')
     school = request.form.get('school')
 
-    new_student = Student(name=name, reg=reg, email=email, phone=phone, school=school)
+    new_student = Student(name=name, reg=reg, email=email,
+                          phone=phone, school=school)
 
     db.session.add(new_student)
     db.session.commit()
 
-    message = f"Dear {new_student.name} you have been subscribed to university email alerts"
+    message = f"Dear {new_student.name} you have been subscribed to university news email alerts"
 
     send_email(new_student.email, "University News Subscription", message)
     return redirect(url_for('main.student'))
@@ -104,9 +116,18 @@ def logout(id):
 
     db.session.delete(alert)
     db.session.commit()
-    flash("alert logged out")
+    flash("alert deleted")
 
     return redirect(url_for('main.index'))
 
 
+@main.route('/student-delete/<id>')
+@login_required
+def delete_student(id):
+    student = Student.query.filter_by(id=id).first_or_404()
 
+    db.session.delete(student)
+    db.session.commit()
+    flash("student deleted successfully")
+
+    return redirect(url_for('main.student'))
