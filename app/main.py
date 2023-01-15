@@ -105,8 +105,7 @@ def add_student():
 @login_required
 def view_alert(id):
     alert = Alert.query.filter_by(id=id).first_or_404()
-    data = f"Post Code: {alert.id}\n Title: {alert.title}\n Body: {alert.body}"
-    return render_template('show_alert.html', alert=alert, data=data)
+    return render_template('show_alert.html', alert=alert)
 
 
 @main.route('/logout/<id>')
